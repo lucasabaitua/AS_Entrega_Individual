@@ -1,0 +1,24 @@
+services:
+        couchdb:     #BASE DE DATOS COCUCHDB
+                image: couchdb:latest
+                ports:
+                        - 5984:5984
+                environment:
+                        COUCHDB_USER: admin
+                        COUCHDB_PASSWORD: admin
+                        # USUARIO Y CONTRASEÑA
+                healthcheck:
+                        test: ["CMD", "curl", "http://localhost:5984"]
+                        interval: 10s
+                        timeout: 10s
+                volumes:
+                        - ./couchdb:/opt/couchdb/data
+        couchdb-cliente:
+                image: lucasabaitua/lucas-cliente
+                container_name: my-couchdb
+                build: .
+                depends_on:
+                        couchdb:
+                                condition: service_healthy
+                links:
+                        - couchdb
